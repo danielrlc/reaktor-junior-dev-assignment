@@ -1,0 +1,1 @@
+[Assignment brief for junior developers - Reaktor](https://www.reaktor.com/junior-dev-assignment/)
