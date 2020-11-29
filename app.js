@@ -1,6 +1,6 @@
 const displayedItems = document.querySelector('#displayedItems');
 
-const buildManufacturerList = async function (product) {
+const buildManufacturerList = async function (product, availabilityData) {
   let manufacturerList = [];
   let repsInventory = [];
   let inventory = [];
@@ -22,8 +22,32 @@ const buildManufacturerList = async function (product) {
     // Handle error case
     console.log(error);
   }
+  console.log(manufacturerList);
   runApp(inventory, manufacturerList);
 };
+
+function runApp(inventory, manufacturerList) {
+  inventory.map((item, i) => {
+    const tr = document.createElement('tr');
+    const id = document.createElement('td');
+    const name = document.createElement('td');
+    const manufacturer = document.createElement('td');
+    const color = document.createElement('td');
+    const price = document.createElement('td');
+    id.textContent = item.id;
+    name.textContent = item.name;
+    manufacturer.textContent = item.manufacturer;
+    color.textContent = item.color;
+    price.textContent = item.price;
+    tr.appendChild(id);
+    tr.appendChild(name);
+    tr.appendChild(manufacturer);
+    tr.appendChild(color);
+    tr.appendChild(price);
+    displayedItems.appendChild(tr);
+    const idInCaps = item.id.toUpperCase();
+  });
+}
 
 const buildAvailabilityList = async function (manufacturer) {
   let availabilityCategories = [];
@@ -47,29 +71,19 @@ const buildAvailabilityList = async function (manufacturer) {
   }
 };
 
-buildManufacturerList('jackets');
-buildAvailabilityList('reps');
-
-function runApp(inventory, manufacturerList) {
-  const tenJ = inventory.filter((item, i) => i < 10);
-  console.log(tenJ);
-  tenJ.map((item, i) => {
-    const tr = document.createElement('tr');
-    const id = document.createElement('td');
-    const name = document.createElement('td');
-    const manufacturer = document.createElement('td');
-    const color = document.createElement('td');
-    const price = document.createElement('td');
-    id.textContent = item.id;
-    name.textContent = item.name;
-    manufacturer.textContent = item.manufacturer;
-    color.textContent = item.color;
-    price.textContent = item.price;
-    tr.appendChild(id);
-    tr.appendChild(name);
-    tr.appendChild(manufacturer);
-    tr.appendChild(color);
-    tr.appendChild(price);
-    displayedItems.appendChild(tr);
-  });
+async function getAvailabilityForManufacturer(manufacturer) {
+  const availabilityUrl =
+    'https://bad-api-assignment.reaktor.com/availability/' + manufacturer;
+  try {
+    // Handle success case
+    const response = await fetch(availabilityUrl);
+    const responseData = await response.json();
+    const availabilityData = responseData.response;
+    buildManufacturerList('jackets', availabilityData);
+  } catch (error) {
+    // Handle error case
+    console.log(error);
+  }
 }
+
+getAvailabilityForManufacturer('reps');
