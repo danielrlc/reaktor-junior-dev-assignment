@@ -50,13 +50,11 @@ async function getInventory(product, availabilityData) {
     // Handle error case
     console.log(error);
   }
-  prepData(inventory, availabilityData);
+  prepFinalData(inventory, availabilityData);
 }
 
-function prepData(inventory, availabilityData) {
-  // combine inventory data and availabilityData together
-  let preppedI = inventory.filter((_, i) => i < 10);
-  const preppedA = availabilityData
+function prepFinalData(inventory, availabilityData) {
+  const preppedAvailabilityData = availabilityData
     // .filter((_, i) => i < 10)
     .map((item) => {
       return {
@@ -64,17 +62,17 @@ function prepData(inventory, availabilityData) {
         availability: item.DATAPAYLOAD.substring(31).split('<')[0],
       };
     });
-  // console.log(preppedI, preppedA);
-  preppedI = preppedI.map((iItem) => {
-    const targetA = preppedA.find((aItem) => aItem.id === iItem.id);
+  // console.log(preppedI, preppedAvailabilityData);
+  combinedData = inventory.map((inventoryItem) => {
+    const itemAvailability = preppedAvailabilityData.find((aItem) => aItem.id === inventoryItem.id);
     return {
-      ...iItem,
-      availability: targetA.availability,
+      ...inventoryItem,
+      availability: itemAvailability.availability,
     };
-    // console.log(targetA);
+    // console.log(itemAvailability);
   });
-  console.log(preppedI);
-  runApp(preppedI);
+  console.log(combinedData);
+  runApp(combinedData);
 }
 
 // const buildAvailabilityList = async function (manufacturer) {
@@ -99,9 +97,8 @@ function prepData(inventory, availabilityData) {
 //   }
 // };
 
-function runApp(data) {
-  data
-    .filter((_, i) => i < 10)
+function runApp(finalData) {
+  finalData
     .map((item, i) => {
       const tr = document.createElement('tr');
       const id = document.createElement('td');
