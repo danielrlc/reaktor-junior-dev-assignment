@@ -1,6 +1,23 @@
 const displayedItems = document.querySelector('#displayedItems');
 
-const getInventory = async function (product, availabilityData) {
+async function getAvailabilityData() {
+  let data = [];
+  const reps = await getAvailabilityForManufacturer('reps');
+  const abiplos = await getAvailabilityForManufacturer('abiplos');
+  const nouke = await getAvailabilityForManufacturer('nouke');
+  const derp = await getAvailabilityForManufacturer('derp');
+  const xoon = await getAvailabilityForManufacturer('xoon');
+  // const allData = await buildAllData(reps, abiplos, nouke, derp, xoon)
+  data = data.concat(reps);
+  data = data.concat(abiplos);
+  data = data.concat(nouke);
+  data = data.concat(derp);
+  data = data.concat(xoon);
+  console.log(data);
+  getInventory('jackets', data);
+}
+
+async function getInventory(product, availabilityData) {
   let inventory = [];
   const productUrl =
     'https://bad-api-assignment.reaktor.com/products/' + product;
@@ -20,13 +37,13 @@ const getInventory = async function (product, availabilityData) {
     console.log(error);
   }
   prepData(inventory, availabilityData);
-};
+}
 
 function prepData(inventory, availabilityData) {
   // combine inventory data and availabilityData together
-  let preppedI = inventory.filter((_, i) => i < 1);
+  let preppedI = inventory.filter((_, i) => i < 10);
   const preppedA = availabilityData
-    .filter((_, i) => i < 1)
+    // .filter((_, i) => i < 10)
     .map((item) => {
       return {
         id: item.id.toLowerCase(),
@@ -43,33 +60,7 @@ function prepData(inventory, availabilityData) {
     // console.log(targetA);
   });
   console.log(preppedI);
-
   runApp(inventory, availabilityData);
-}
-
-function runApp(inventory, availabilityData) {
-  inventory
-    .filter((_, i) => i < 10)
-    .map((item, i) => {
-      const tr = document.createElement('tr');
-      const id = document.createElement('td');
-      const name = document.createElement('td');
-      const manufacturer = document.createElement('td');
-      const color = document.createElement('td');
-      const price = document.createElement('td');
-      id.textContent = item.id;
-      name.textContent = item.name;
-      manufacturer.textContent = item.manufacturer;
-      color.textContent = item.color;
-      price.textContent = item.price;
-      tr.appendChild(id);
-      tr.appendChild(name);
-      tr.appendChild(manufacturer);
-      tr.appendChild(color);
-      tr.appendChild(price);
-      displayedItems.appendChild(tr);
-      const idInCaps = item.id.toUpperCase();
-    });
 }
 
 const buildAvailabilityList = async function (manufacturer) {
@@ -102,11 +93,39 @@ async function getAvailabilityForManufacturer(manufacturer) {
     const response = await fetch(availabilityUrl);
     const responseData = await response.json();
     const availabilityData = responseData.response;
-    getInventory('jackets', availabilityData);
+    return availabilityData;
   } catch (error) {
     // Handle error case
     console.log(error);
   }
 }
 
-getAvailabilityForManufacturer('reps');
+function runApp(inventory, availabilityData) {
+  inventory
+    .filter((_, i) => i < 10)
+    .map((item, i) => {
+      const tr = document.createElement('tr');
+      const id = document.createElement('td');
+      const name = document.createElement('td');
+      const manufacturer = document.createElement('td');
+      const color = document.createElement('td');
+      const price = document.createElement('td');
+      const availability = document.createElement('td');
+      id.textContent = item.id;
+      name.textContent = item.name;
+      manufacturer.textContent = item.manufacturer;
+      color.textContent = item.color;
+      price.textContent = item.price;
+      availability.textContent = item.availability;
+      tr.appendChild(id);
+      tr.appendChild(name);
+      tr.appendChild(manufacturer);
+      tr.appendChild(color);
+      tr.appendChild(price);
+      tr.appendChild(availability);
+      displayedItems.appendChild(tr);
+      const idInCaps = item.id.toUpperCase();
+    });
+}
+
+getAvailabilityData();
