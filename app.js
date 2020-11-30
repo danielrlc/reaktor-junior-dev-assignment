@@ -12,7 +12,6 @@ async function getAvailabilityData() {
   data = data.concat(nouke);
   data = data.concat(derp);
   data = data.concat(xoon);
-  console.log(data);
   getInventory('jackets', data);
 }
 
@@ -39,12 +38,6 @@ async function getInventory(product, availabilityData) {
     // Handle success case
     const response = await fetch(productUrl);
     inventory = await response.json();
-    availabilityData
-      .filter((_, i) => i < 10)
-      .map((item) => {
-        const id = item.id.toLowerCase();
-        const availability = item.DATAPAYLOAD.substring(31).split('<')[0];
-      });
   } catch (error) {
     // Handle error case
     console.log(error);
@@ -61,19 +54,18 @@ function prepFinalData(inventory, availabilityData) {
   });
   combinedData = inventory.map((inventoryItem) => {
     const itemAvailability = preppedAvailabilityData.find(
-      (aItem) => aItem.id === inventoryItem.id,
+      (availabilityItem) => availabilityItem.id === inventoryItem.id,
     );
     return {
       ...inventoryItem,
       availability: itemAvailability.availability,
     };
   });
-  console.log(combinedData);
   runApp(combinedData);
 }
 
 function runApp(finalData) {
-  finalData.map((item, i) => {
+  finalData.map((item) => {
     const itemFeaturesToDisplay = [
       'id',
       'name',
