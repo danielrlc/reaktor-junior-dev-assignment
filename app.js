@@ -13,14 +13,39 @@ const getInventory = async function (product, availabilityData) {
       .map((item) => {
         const id = item.id.toLowerCase();
         const availability = item.DATAPAYLOAD.substring(31).split('<')[0];
-        console.log(id, availability);
+        // console.log(id, availability);
       });
   } catch (error) {
     // Handle error case
     console.log(error);
   }
-  runApp(inventory, availabilityData);
+  prepData(inventory, availabilityData);
 };
+
+function prepData(inventory, availabilityData) {
+  // combine inventory data and availabilityData together
+  let preppedI = inventory.filter((_, i) => i < 1);
+  const preppedA = availabilityData
+    .filter((_, i) => i < 1)
+    .map((item) => {
+      return {
+        id: item.id.toLowerCase(),
+        availability: item.DATAPAYLOAD.substring(31).split('<')[0],
+      };
+    });
+  // console.log(preppedI, preppedA);
+  preppedI = preppedI.map((iItem) => {
+    const targetA = preppedA.find((aItem) => aItem.id === iItem.id);
+    return {
+      ...iItem,
+      availability: targetA.availability,
+    };
+    // console.log(targetA);
+  });
+  console.log(preppedI);
+
+  runApp(inventory, availabilityData);
+}
 
 function runApp(inventory, availabilityData) {
   inventory
