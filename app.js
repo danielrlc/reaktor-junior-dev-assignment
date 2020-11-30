@@ -17,6 +17,21 @@ async function getAvailabilityData() {
   getInventory('jackets', data);
 }
 
+async function getAvailabilityForManufacturer(manufacturer) {
+  const availabilityUrl =
+    'https://bad-api-assignment.reaktor.com/availability/' + manufacturer;
+  try {
+    // Handle success case
+    const response = await fetch(availabilityUrl);
+    const responseData = await response.json();
+    const availabilityData = responseData.response;
+    return availabilityData;
+  } catch (error) {
+    // Handle error case
+    console.log(error);
+  }
+}
+
 async function getInventory(product, availabilityData) {
   let inventory = [];
   const productUrl =
@@ -63,42 +78,27 @@ function prepData(inventory, availabilityData) {
   runApp(inventory, availabilityData);
 }
 
-const buildAvailabilityList = async function (manufacturer) {
-  let availabilityCategories = [];
-  const availabilityUrl =
-    'https://bad-api-assignment.reaktor.com/availability/' + manufacturer;
-  try {
-    // Handle success case
-    const response = await fetch(availabilityUrl);
-    const responseData = await response.json();
-    const availabilityData = responseData.response;
-    console.log(availabilityData);
-    availabilityData
-      .filter((_, i) => i < 10)
-      .map((item) => {
-        const inStockValue = item.DATAPAYLOAD.substring(31).split('<')[0];
-        console.log(inStockValue);
-      });
-  } catch (error) {
-    // Handle error case
-    console.log(error);
-  }
-};
-
-async function getAvailabilityForManufacturer(manufacturer) {
-  const availabilityUrl =
-    'https://bad-api-assignment.reaktor.com/availability/' + manufacturer;
-  try {
-    // Handle success case
-    const response = await fetch(availabilityUrl);
-    const responseData = await response.json();
-    const availabilityData = responseData.response;
-    return availabilityData;
-  } catch (error) {
-    // Handle error case
-    console.log(error);
-  }
-}
+// const buildAvailabilityList = async function (manufacturer) {
+//   let availabilityCategories = [];
+//   const availabilityUrl =
+//     'https://bad-api-assignment.reaktor.com/availability/' + manufacturer;
+//   try {
+//     // Handle success case
+//     const response = await fetch(availabilityUrl);
+//     const responseData = await response.json();
+//     const availabilityData = responseData.response;
+//     console.log(availabilityData);
+//     availabilityData
+//       .filter((_, i) => i < 10)
+//       .map((item) => {
+//         const inStockValue = item.DATAPAYLOAD.substring(31).split('<')[0];
+//         console.log(inStockValue);
+//       });
+//   } catch (error) {
+//     // Handle error case
+//     console.log(error);
+//   }
+// };
 
 function runApp(inventory, availabilityData) {
   inventory
