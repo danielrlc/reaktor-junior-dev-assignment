@@ -7,7 +7,6 @@ async function getAvailabilityData() {
   const nouke = await getAvailabilityForManufacturer('nouke');
   const derp = await getAvailabilityForManufacturer('derp');
   const xoon = await getAvailabilityForManufacturer('xoon');
-  // const allData = await buildAllData(reps, abiplos, nouke, derp, xoon)
   data = data.concat(reps);
   data = data.concat(abiplos);
   data = data.concat(nouke);
@@ -75,7 +74,7 @@ function prepData(inventory, availabilityData) {
     // console.log(targetA);
   });
   console.log(preppedI);
-  runApp(inventory, availabilityData);
+  runApp(preppedI);
 }
 
 // const buildAvailabilityList = async function (manufacturer) {
@@ -100,8 +99,8 @@ function prepData(inventory, availabilityData) {
 //   }
 // };
 
-function runApp(inventory, availabilityData) {
-  inventory
+function runApp(data) {
+  data
     .filter((_, i) => i < 10)
     .map((item, i) => {
       const tr = document.createElement('tr');
